@@ -24,9 +24,9 @@ void lenet(
 	AXI_DMA_SLAVE(in_stream, connect_0);
 
 //	void SCIG<KerDim_curr, IFMCH_curr, IFMDim_curr, OFMCH_curr, OFMDim_curr>(in, out, PadDim_curr = 0)
-	SCIG<5, 1, 28, 20, 24, 0>(connect_0, connect_1);
+	SCIG<5, 1, 28, 20, 24, 0>(connect_0, connect_1); // Conv 연산 중 im2col
 //	void SMM<A_COL_MAX, A_ROW_MAX, B_COL_MAX>(in_stream_a, out_stream, layer_id, output_rectify = 1, FACTOR)
-	SMM<1, 25, 20>(connect_1, connect_2, 1, 0, 25);
+	SMM<1, 25, 20>(connect_1, connect_2, 1, 0, 25); // 
 //	void pool<pool_size, In_CH_MAX, IFMDim_MAX> (in, out, layer_id, pool_mode, // 0 for max pooling, 1 for average pooling
 //		const bool output_rectify = 1)
 	pool<2, 20, 24>(connect_2, connect_3, 1, 0, 0);
