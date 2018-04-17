@@ -42,9 +42,11 @@ void AXI_DMA_SLAVE(
 		unsigned int IFM_size_0 = IFMChannels * IFMDim;
 		unsigned int IFM_size_1 = IFM_size_0 * IFMDim;
 		unsigned int IFM_bound = IFM_size_1 * batch_size;
+#if 0 // jsha
 #pragma HLS RESOURCE variable=IFM_size_0 core=Mul_LUT
 #pragma HLS RESOURCE variable=IFM_size_1 core=Mul_LUT
 #pragma HLS RESOURCE variable=IFM_bound core=Mul_LUT
+#endif
 
 		for(unsigned int i = 0; i < IFM_bound; i++){
 #pragma HLS PIPELINE II=1
@@ -56,9 +58,11 @@ void AXI_DMA_SLAVE(
 		unsigned int KER_size_0 = OFMChannels*ConvKernelDim;
 		unsigned int KER_size_1 = KER_size_0*ConvKernelDim;
 		unsigned int KER_bound = KER_size_1*IFMChannels;
+#if 0 // jsha
 #pragma HLS RESOURCE variable=KER_size_0 core=Mul_LUT
 #pragma HLS RESOURCE variable=KER_size_1 core=Mul_LUT
 #pragma HLS RESOURCE variable=KER_bound core=Mul_LUT
+#endif
 
 		for(unsigned int i = 0; i < KER_bound; i++){
 #pragma HLS PIPELINE II=1

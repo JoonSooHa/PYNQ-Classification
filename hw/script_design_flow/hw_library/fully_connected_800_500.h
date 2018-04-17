@@ -1,17 +1,24 @@
 
 template<
-	unsigned A_COL_MAX,
-	unsigned A_ROW_MAX,
+	unsigned A_COL_MAX
+#if 0 // jsha
+	,
 	unsigned B_COL_MAX
+	unsigned A_ROW_MAX,
+#endif
 >
-void FC(
+void FC_800_500(
 	hls::stream<AXI_VAL> &in_stream_a, 
 	hls::stream<AXI_VAL> &out_stream,
 	const unsigned layer_id,
 	const unsigned output_rectify,
 	const int FACTOR
 ){
-
+#if 1 // jsha
+	const unsigned A_ROW_MAX = 800;
+	const unsigned B_COL_MAX = 500;
+	int id_x_B_ROW_MAX = 0;
+#endif
 	const unsigned B_ROW_MAX = A_ROW_MAX;
 	static ap_int<InpWidth> A[A_COL_MAX][A_ROW_MAX], B[B_COL_MAX][B_ROW_MAX];
 #if 1
@@ -135,7 +142,12 @@ void FC(
 						L3:for(int ic = 0; ic < B_ROW_MAX/FACTOR; ++ic){
 #pragma HLS PIPELINE II=1
 							L4:for(int id = 0; id < FACTOR; ++id){
+#if 1
 								sum += A[ia][id*B_ROW_MAX/FACTOR+ic] * B[ib][id*B_ROW_MAX/FACTOR+ic];
+#elif 0 // jsha
+								id_x_B_ROW_MAX = (id<<9)+(id<<8)+(id<<5);
+								sum += A[ia][id_x_B_ROW_MAX/FACTOR+ic] * B[ib][id_x_B_ROW_MAX/FACTOR+ic];
+#endif
 							}
 						}
 						int output_data = sum/quant_scale;

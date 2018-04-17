@@ -14,10 +14,20 @@ void SMM(
 
 	const unsigned B_ROW_MAX = A_ROW_MAX;
 	static ap_int<InpWidth> A[A_COL_MAX][A_ROW_MAX], B[B_COL_MAX][B_ROW_MAX];
+#if 0 // jsha
 #pragma HLS RESOURCE variable=A core=RAM_S2P_LUTRAM
 #pragma HLS RESOURCE variable=B core=RAM_S2P_BRAM
+#elif 1 // jsha
+#pragma HLS RESOURCE variable=A core=RAM_S2P_LUTRAM
+#pragma HLS RESOURCE variable=B core=RAM_S2P_LUTRAM
+#endif
+#if 1
 #pragma HLS array_partition variable=A block factor=FACTOR dim=2
 #pragma HLS array_partition variable=B block factor=FACTOR dim=2
+#elif 0 // jsha
+#pragma HLS array_partition variable=A complete dim=0
+#pragma HLS array_partition variable=B complete dim=0
+#endif
 	AXI_VAL valIn_a, valOut;
 
 	// first data showing mode.
@@ -143,9 +153,11 @@ void SMM(
 		unsigned int KER_size_0 = OFMChannels*ConvKernelDim;
 		unsigned int KER_size_1 = KER_size_0*ConvKernelDim;
 		unsigned int KER_bound = KER_size_1*IFMChannels;
+#if 0 // jsha
 #pragma HLS RESOURCE variable=KER_size_0 core=Mul_LUT
 #pragma HLS RESOURCE variable=KER_size_1 core=Mul_LUT
 #pragma HLS RESOURCE variable=KER_bound core=Mul_LUT
+#endif
 		for(unsigned int i = 0; i < KER_bound; i++){
 #pragma HLS PIPELINE II=1
 			valIn_a = in_stream_a.read();

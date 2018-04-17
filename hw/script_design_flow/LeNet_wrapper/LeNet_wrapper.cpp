@@ -35,8 +35,13 @@ void lenet(
 	SMM<1, 500, 50>(connect_4, connect_5, 2, 0, 25); // 
 	pool<2, 50, 8>(connect_5, connect_6, 2, 0, 0);
 	
+#if 0 // jsha
 	FC<1, 800, 500>(connect_6, connect_7, 3, 1, 25);
 	FC<1, 500, 10>(connect_7, connect_8, 4, 0, 10);
+#elif 1 // jsha
+	FC_800_500<1>(connect_6, connect_7, 3, 1, 25);
+	FC_500_10<1>(connect_7, connect_8, 4, 0, 10);
+#endif
 
 	AXI_DMA_MASTER(connect_8, out_stream);
 

@@ -12,11 +12,13 @@ add_files ../hw_library/axi_dma_slave.h
 add_files config.h
 add_files ../hw_library/fixed_point_stream_convolution.h
 add_files ../hw_library/fully_connected.h
+add_files ../hw_library/fully_connected_800_500.h
+add_files ../hw_library/fully_connected_500_10.h
 add_files ../hw_library/pool.h
 add_files ../hw_library/stream_convolution_slideWindow.h
 add_files -tb main.cpp
 open_solution -reset "solution1"
-set_part {xc7z020clg484-1} -tool vivado
+set_part {xc7z020clg400-1} -tool vivado
 create_clock -period 10 -name default
 #source "./LeNet/solution1/directives.tcl"
 #csim_design

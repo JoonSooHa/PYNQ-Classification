@@ -100,12 +100,20 @@ void SCIG(
 	if (status == 0){
 
 		//	constexpr unsigned int IFMChanChunk = IFMChannels*InpWidth;
-		unsigned int IFMPadDim = IFMDim_curr + 2*padValue;
+		unsigned int IFMPadDim = IFMDim_curr + (padValue << 1);//jsha// IFMDim_curr + 2*padValue;
 		unsigned int IFMPadDimSqrt = IFMPadDim*IFMPadDim;
+#if 0 // jsha
 	#pragma HLS RESOURCE variable=IFMPadDimSqrt core=Mul_LUT
+#endif
 		int IFMLoopBound = IFMDim_curr + padValue;
 		ap_int<InpWidth> inputBuf[inElem_MAX];
+#if 1
 	#pragma HLS_RESOURCE variable inputBuf core=RAM_S2P_BRAM
+#elif 0 // jsha
+	#pragma HLS ARRAY_PARTITION variable=inputBuf dim=0 complete
+#elif 0 // jsha
+	#pragma HLS_RESOURCE variable inputBuf core=RAM_S2P_LUTRAM
+#endif
 
 		unsigned int additional_lines = IFMPadDimSqrt/(OFMDim_curr * KerDim_curr * KerDim_curr);
 		unsigned int Initial_lines =  ((IFMPadDim) < ((OFMDim_curr * KerDim_curr * KerDim_curr)) ? (KerDim_curr+1) : (KerDim_curr + additional_lines - IFMDim_curr));
@@ -119,13 +127,19 @@ void SCIG(
 
 
 		unsigned int baseIterBound = baseIter*batch_size;
+#if 0 //jsha
 #pragma HLS RESOURCE variable=baseIterBound core=Mul_LUT
+#endif
 		for (unsigned int i = 0; i < baseIter*batch_size; i++) {
 #pragma HLS PIPELINE II=1
 #pragma HLS DEPENDENCE variable=inputBuf inter false
 			if (inp < IFMPadDimSqrt) {
 				ap_uint<InpWidth> inElem [256];
+#if 0 // jsha
 #pragma HLS RESOURCE variable=inElem core=RAM_S2P_LUTRAM
+#elif 1 // jsha
+#pragma HLS ARRAY_PARTITION variable=inElem dim=0 complete
+#endif
 				if ((inp_i < 0) || (inp_j < 0) || (inp_i >= IFMDim_curr) || (inp_j >= IFMDim_curr)) {
 					for(unsigned int inp_ch=0; inp_ch<IFMCH_curr; inp_ch++){
 						inElem[inp_ch] = padValue;
@@ -183,9 +197,11 @@ void SCIG(
 		unsigned int KER_size_0 = OFMChannels*ConvKernelDim;
 		unsigned int KER_size_1 = KER_size_0*ConvKernelDim;
 		unsigned int KER_bound = KER_size_1*IFMChannels;
+#if 0 // jsha
 #pragma HLS RESOURCE variable=KER_size_0 core=Mul_LUT
 #pragma HLS RESOURCE variable=KER_size_1 core=Mul_LUT
 #pragma HLS RESOURCE variable=KER_bound core=Mul_LUT
+#endif
 		for(unsigned int i = 0; i < KER_bound; i++){
 #pragma HLS PIPELINE II=1
 			valIn = in.read();

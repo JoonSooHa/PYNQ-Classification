@@ -63,7 +63,18 @@ void pool (
 	const bool output_rectify
 ) {
 
+#if 0 // jsha
 	const unsigned pool_square = pool_size * pool_size;
+#elif 1 // jsha
+	unsigned pool_square;
+	if (pool_size == 1) {
+		pool_square = 1;
+	} else if(pool_size == 2) {
+		pool_square = 4;
+	} else {
+		pool_square = 4;
+	}
+#endif
 	AXI_VAL valIn, valOut;
 
 	// first two data as row_size and col_size
@@ -117,9 +128,17 @@ void pool (
 	//////////////////////////////////////////////////////////////////////////////////////////
 	// need buffer space for a single maxpooled row of the image
 	int buf[In_CH_MAX][IFMDim_MAX / pool_size];
+#if 1
 #pragma HLS RESOURCE variable=buf core=RAM_2P_LUTRAM
+#elif 0 // jsha
+#pragma HLS ARRAY_PARTITION variable=buf complete dim=0
+#endif
 	int acc[In_CH_MAX];
+#if 0
 #pragma HLS RESOURCE variable=acc core=RAM_2P_LUTRAM
+#elif 1 // jsha
+#pragma HLS ARRAY_PARTITION variable=acc complete dim=0
+#endif
 	for(unsigned int j = 0; j < In_CH_MAX; j++){
 		for(unsigned int i = 0; i < IFMDim_MAX / pool_size; i++) {
 #pragma HLS UNROLL
@@ -188,9 +207,11 @@ void pool (
 		unsigned int KER_size_0 = OFMChannels*ConvKernelDim;
 		unsigned int KER_size_1 = KER_size_0*ConvKernelDim;
 		unsigned int KER_bound = KER_size_1*IFMChannels;
+#if 0 // jsha
 #pragma HLS RESOURCE variable=KER_size_0 core=Mul_LUT
 #pragma HLS RESOURCE variable=KER_size_1 core=Mul_LUT
 #pragma HLS RESOURCE variable=KER_bound core=Mul_LUT
+#endif
 		for(unsigned int i = 0; i < KER_bound; i++){
 #pragma HLS PIPELINE II=1
 			valIn = in.read();
