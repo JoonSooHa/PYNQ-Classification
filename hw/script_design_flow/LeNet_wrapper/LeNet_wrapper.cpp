@@ -7,7 +7,7 @@ void lenet(
 #pragma HLS DATAFLOW
 #pragma HLS INTERFACE axis port=in_stream
 #pragma HLS INTERFACE axis port=out_stream
-#pragma HLS INTERFACE ap_ctrl_none port=return
+#pragma HLS INTERFACE ap_ctrl_none port=return // axi lite 인터페이스를 안 만들어준다.
 
 	// Defining Interconnections
 	hls::stream<AXI_VAL> connect_0, connect_1, connect_2, connect_3, connect_4, connect_5, connect_6, connect_7, connect_8;
